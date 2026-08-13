@@ -69,7 +69,7 @@ gcloud init
 Verifica que el proyecto correcto esté activo:
 
 ```cmd
-gcloud config set project cicdtraining-498421
+gcloud config set project bold-bastion-505423-e7
 gcloud config list
 ```
 
@@ -110,19 +110,19 @@ gcloud iam service-accounts create github-actions-sa --display-name="GitHub Acti
 **Permiso para desplegar en Cloud Run:**
 
 ```cmd
-gcloud projects add-iam-policy-binding cicdtraining-498421 --member="serviceAccount:github-actions-sa@cicdtraining-498421.iam.gserviceaccount.com" --role="roles/run.admin"
+gcloud projects add-iam-policy-binding bold-bastion-505423-e7 --member="serviceAccount:github-actions-sa@bold-bastion-505423-e7.iam.gserviceaccount.com" --role="roles/run.admin"
 ```
 
 **Permiso para subir imágenes a Artifact Registry:**
 
 ```cmd
-gcloud projects add-iam-policy-binding cicdtraining-498421 --member="serviceAccount:github-actions-sa@cicdtraining-498421.iam.gserviceaccount.com" --role="roles/artifactregistry.writer"
+gcloud projects add-iam-policy-binding bold-bastion-505423-e7 --member="serviceAccount:github-actions-sa@bold-bastion-505423-e7.iam.gserviceaccount.com" --role="roles/artifactregistry.writer"
 ```
 
 **Permiso para actuar como Service Account:**
 
 ```cmd
-gcloud projects add-iam-policy-binding cicdtraining-498421 --member="serviceAccount:github-actions-sa@cicdtraining-498421.iam.gserviceaccount.com" --role="roles/iam.serviceAccountUser"
+gcloud projects add-iam-policy-binding bold-bastion-505423-e7 --member="serviceAccount:github-actions-sa@bold-bastion-505423-e7.iam.gserviceaccount.com" --role="roles/iam.serviceAccountUser"
 ```
 
 ---
@@ -134,7 +134,7 @@ Permite que GitHub Actions se autentique con Google Cloud sin necesidad de clave
 **Obtener el número del proyecto:**
 
 ```cmd
-gcloud projects describe cicdtraining-498421 --format="value(projectNumber)"
+gcloud projects describe bold-bastion-505423-e7 --format="value(projectNumber)"
 ```
 
 **Crear el Identity Pool:**
@@ -146,13 +146,13 @@ gcloud iam workload-identity-pools create "github-pool" --location="global" --di
 **Crear el Provider:**
 
 ```cmd
-gcloud iam workload-identity-pools providers create-oidc "github-provider" --location="global" --workload-identity-pool="github-pool" --display-name="GitHub Provider" --attribute-mapping="google.subject=assertion.sub,attribute.repository=assertion.repository,attribute.repository_owner=assertion.repository_owner" --attribute-condition="assertion.repository_owner=='mafeopa'" --issuer-uri="https://token.actions.githubusercontent.com"
+gcloud iam workload-identity-pools providers create-oidc "github-provider" --location="global" --workload-identity-pool="github-pool" --display-name="GitHub Provider" --attribute-mapping="google.subject=assertion.sub,attribute.repository=assertion.repository,attribute.repository_owner=assertion.repository_owner" --attribute-condition="assertion.repository_owner=='invincibleOf'" --issuer-uri="https://token.actions.githubusercontent.com"
 ```
 
 **Vincular el Service Account al pool:**
 
 ```cmd
-gcloud iam service-accounts add-iam-policy-binding github-actions-sa@cicdtraining-498421.iam.gserviceaccount.com --role="roles/iam.workloadIdentityUser" --member="principalSet://iam.googleapis.com/projects/622078306811/locations/global/workloadIdentityPools/github-pool/attribute.repository_owner/mafeopa"
+gcloud iam service-accounts add-iam-policy-binding github-actions-sa@bold-bastion-505423-e7.iam.gserviceaccount.com --role="roles/iam.workloadIdentityUser" --member="principalSet://iam.googleapis.com/projects/452508169067/locations/global/workloadIdentityPools/github-pool/attribute.repository_owner/invincibleOf"
 ```
 
 **Obtener el nombre completo del provider** (necesario como secreto en GitHub):
@@ -163,7 +163,7 @@ gcloud iam workload-identity-pools providers describe github-provider --location
 
 El valor será algo como:
 ```
-projects/622078306811/locations/global/workloadIdentityPools/github-pool/providers/github-provider
+projects/452508169067/locations/global/workloadIdentityPools/github-pool/providers/github-provider
 ```
 
 ---
@@ -174,9 +174,9 @@ Ve a tu repositorio → **Settings → Secrets and variables → Actions → New
 
 | Nombre | Valor |
 |--------|-------|
-| `GCP_PROJECT_ID` | `cicdtraining-498421` |
-| `WIF_PROVIDER` | `projects/622078306811/locations/global/workloadIdentityPools/github-pool/providers/github-provider` |
-| `WIF_SERVICE_ACCOUNT` | `github-actions-sa@cicdtraining-498421.iam.gserviceaccount.com` |
+| `GCP_PROJECT_ID` | `bold-bastion-505423-e7` |
+| `WIF_PROVIDER` | `projects/452508169067/locations/global/workloadIdentityPools/github-pool/providers/github-provider` |
+| `WIF_SERVICE_ACCOUNT` | `github-actions-sa@bold-bastion-505423-e7.iam.gserviceaccount.com` |
 
 ---
 
@@ -314,13 +314,13 @@ Haz push a `main` y ve a la pestaña **Actions** en GitHub para ver el pipeline 
 Una vez verde, obtén la URL del servicio:
 
 ```cmd
-gcloud run services describe mi-app --region=us-central1 --project=cicdtraining-498421 --format="value(status.url)"
+gcloud run services describe mi-app --region=us-central1 --project=bold-bastion-505423-e7 --format="value(status.url)"
 ```
 
 Si recibes error `403`, habilita el acceso público:
 
 ```cmd
-gcloud run services add-iam-policy-binding mi-app --region=us-central1 --project=cicdtraining-498421 --member="allUsers" --role="roles/run.invoker"
+gcloud run services add-iam-policy-binding mi-app --region=us-central1 --project=bold-bastion-505423-e7 --member="allUsers" --role="roles/run.invoker"
 ```
 
 Abre la URL en el navegador y deberías ver:
@@ -332,7 +332,7 @@ Hola desde Cloud Run 🚀
 Ver logs del servicio:
 
 ```cmd
-gcloud logging read "resource.type=cloud_run_revision AND resource.labels.service_name=mi-app" --limit=20 --project=cicdtraining-498421 --format="value(textPayload)"
+gcloud logging read "resource.type=cloud_run_revision AND resource.labels.service_name=mi-app" --limit=20 --project=bold-bastion-505423-e7 --format="value(textPayload)"
 ```
 
 ---
@@ -341,7 +341,7 @@ gcloud logging read "resource.type=cloud_run_revision AND resource.labels.servic
 
 | # | Brecha | Riesgo | Solución recomendada |
 |---|--------|--------|----------------------|
-| 1 | Pool abierto a toda la cuenta GitHub | Cualquier repo puede usar las credenciales | Restringir a un repo específico con `assertion.repository=='mafeopa/cicdtraining'` |
+| 1 | Pool abierto a toda la cuenta GitHub | Cualquier repo puede usar las credenciales | Restringir a un repo específico con `assertion.repository=='invincibleOf/cicdtraining'` |
 | 2 | Servicio público sin autenticación (`allUsers`) | Abuso de recursos y costos inesperados | Agregar rate limiting o usar Cloud Armor |
 | 3 | Service Account con `roles/run.admin` | Permisos excesivos sobre Cloud Run | Cambiar a `roles/run.developer` |
 | 4 | Sin escaneo de vulnerabilidades en la imagen | Imágenes con CVEs desplegadas en producción | Agregar `google-github-actions/scan-docker-image` al workflow |
@@ -359,4 +359,4 @@ gcloud logging read "resource.type=cloud_run_revision AND resource.labels.servic
 
 ---
 
-*Universidad de Boyacá • 2026 • github.com/mafeopa*
+*Universidad de Boyacá • 2026 • github.com/invincibleOf*
