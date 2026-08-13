@@ -16,6 +16,7 @@ const httpRequestsTotal = new client.Counter({
   registers: [register]
 })
 
+
 // Histograma de latencia
 const httpRequestDuration = new client.Histogram({
   name: 'http_request_duration_ms',
